@@ -57,6 +57,7 @@ function goHome() {
   // hide app
   appShell.classList.remove("ready");
   appShell.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("appRunning");
 
   // show welcome page
   welcomeScreen.style.display = "flex";
@@ -90,6 +91,7 @@ function showAppUI() {
   if (controls) {
     controls.classList.remove("controlsCollapsed");
   }
+  document.body.classList.add("appRunning");
 }
 
 function resetControls() {
