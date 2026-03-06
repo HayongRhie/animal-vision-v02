@@ -37,10 +37,33 @@ const modalBackdrop = $("modalBackdrop");
 const modalTitleEl = $("modalTitle");
 const modalBody = $("modalBody");
 const modalClose = $("modalClose");
+const homeBtn = $("homeBtn");
 
 let cameraStarted = false;
 
 /* ---------- Helpers ---------- */
+
+function goHome() {
+
+  // stop camera
+  if (video.srcObject) {
+    const tracks = video.srcObject.getTracks();
+    tracks.forEach(track => track.stop());
+    video.srcObject = null;
+  }
+
+  cameraStarted = false;
+
+  // hide app
+  appShell.classList.remove("ready");
+  appShell.setAttribute("aria-hidden", "true");
+
+  // show welcome page
+  welcomeScreen.style.display = "flex";
+
+  setStatus("", false);
+}
+safeOn(homeBtn, "click", goHome);
 
 function setStatus(html, show = true) {
   if (!statusEl) return;
@@ -182,7 +205,7 @@ function coneDiagramSVG() {
 document
   .getElementById("toggleControlsBtn")
   .addEventListener("click", toggleControls);
-  
+
 /* ---------- Modal content ---------- */
 
 const COLOUR_101_HTML = `
