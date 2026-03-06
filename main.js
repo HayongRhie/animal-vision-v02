@@ -15,6 +15,7 @@ const resetBtn = $("resetBtn");
 const toggleControlsBtn = $("toggleControlsBtn");
 const collapseControlsBtn = $("collapseControlsBtn");
 const controls = $("controls");
+const homeBtn = $("homeBtn");
 
 const modeEl = $("mode");
 const strengthEl = $("strength");
@@ -37,12 +38,10 @@ const modalBackdrop = $("modalBackdrop");
 const modalTitleEl = $("modalTitle");
 const modalBody = $("modalBody");
 const modalClose = $("modalClose");
-const homeBtn = $("homeBtn");
 
 let cameraStarted = false;
 
 /* ---------- Helpers ---------- */
-
 function goHome() {
 
   // stop camera
@@ -57,14 +56,13 @@ function goHome() {
   // hide app
   appShell.classList.remove("ready");
   appShell.setAttribute("aria-hidden", "true");
-  document.body.classList.remove("appRunning");
 
   // show welcome page
   welcomeScreen.style.display = "flex";
 
   setStatus("", false);
+  document.body.classList.add("appRunning");
 }
-safeOn(homeBtn, "click", goHome);
 
 function setStatus(html, show = true) {
   if (!statusEl) return;
@@ -79,6 +77,7 @@ function safeOn(el, event, handler) {
   }
   el.addEventListener(event, handler);
 }
+safeOn(homeBtn, "click", goHome);
 
 function showAppUI() {
   if (appShell) {
@@ -91,6 +90,7 @@ function showAppUI() {
   if (controls) {
     controls.classList.remove("controlsCollapsed");
   }
+  updateControlsButton();
   document.body.classList.add("appRunning");
 }
 
@@ -106,17 +106,22 @@ function resetControls() {
   setTimeout(() => setStatus("", false), 1400);
 }
 
-function toggleControls() {
+function updateControlsButton() {
   const controls = document.getElementById("controls");
   const btn = document.getElementById("toggleControlsBtn");
+  if (!controls || !btn) return;
+
+  btn.textContent = controls.classList.contains("controlsCollapsed")
+    ? "Show"
+    : "Hide";
+}
+
+function toggleControls() {
+  const controls = document.getElementById("controls");
+  if (!controls) return;
 
   controls.classList.toggle("controlsCollapsed");
-
-  if (controls.classList.contains("controlsCollapsed")) {
-    btn.textContent = "Show";
-  } else {
-    btn.textContent = "Hide";
-  }
+  updateControlsButton();
 }
 
 function escapeHtml(str) {
@@ -203,10 +208,6 @@ function coneDiagramSVG() {
   </svg>
   `;
 }
-
-document
-  .getElementById("toggleControlsBtn")
-  .addEventListener("click", toggleControls);
 
 /* ---------- Modal content ---------- */
 
@@ -775,7 +776,6 @@ safeOn(learnBtn, "click", () => {
 
 safeOn(resetBtn, "click", resetControls);
 safeOn(toggleControlsBtn, "click", toggleControls);
-safeOn(collapseControlsBtn, "click", toggleControls);
 
 /* ---------- UI plumbing ---------- */
 
@@ -849,6 +849,8 @@ function updateUIForMode() {
 }
 
 safeOn(modeEl, "change", updateUIForMode);
+
+
 
 /* ---------- WebGL ---------- */
 
@@ -1227,6 +1229,7 @@ gl.uniform1i(uPrevTex, 1);
 resize();
 updateCompareUI();
 updateUIForMode();
+updateControlsButton();
 
 /* ---------- Camera ---------- */
 
